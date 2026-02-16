@@ -5,8 +5,11 @@ import {
   Users2,
 } from "lucide-react";
 import "./App.css";
-import { Link } from "react-router-dom";
+import { Link, Routes, Route } from "react-router-dom";
 import DashBoardPage from "./pages/DashBoardPage";
+import AdherantPage from "./pages/AdherantPage";
+import DemandeEmpruntPage from "./pages/DemandeEmpruntPage";
+import NotificationsPage from "./pages/NotificationsPage";
 
 function App() {
   return (
@@ -31,28 +34,28 @@ function App() {
         {/* Navigation Items */}
         <nav className="flex-1 space-y-4">
           {/* Dashboard */}
-          <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-neutral-700 cursor-pointer transition">
+          <Link to="/" className="flex items-center gap-3 p-3 rounded-lg hover:bg-neutral-700 cursor-pointer transition">
             <Home className="w-6 h-6 text-blue-500" />
             <span className="font-medium text-blue-500">Dashboard</span>
-          </div>
+          </Link>
 
           {/* Adherant */}
-          <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-neutral-700 cursor-pointer transition">
+          <Link to="/adherant" className="flex items-center gap-3 p-3 rounded-lg hover:bg-neutral-700 cursor-pointer transition">
             <Users2 className="w-6 h-6" />
             <span className="font-medium ">Adherant</span>
-          </div>
+          </Link>
 
           {/* Demande D'emprunt */}
-          <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-neutral-700 cursor-pointer transition">
+          <Link to="/demandes" className="flex items-center gap-3 p-3 rounded-lg hover:bg-neutral-700 cursor-pointer transition">
             <MessageCircle className="w-6 h-6 text-white" />
             <span className="font-medium text-white">Demande D'emprunt</span>
-          </div>
+          </Link>
 
           {/* Notifications */}
-          <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-neutral-700 cursor-pointer transition">
+          <Link to="/notifications" className="flex items-center gap-3 p-3 rounded-lg hover:bg-neutral-700 cursor-pointer transition">
             <Bell className="w-6 h-6 text-white" />
             <span className="font-medium text-white">Notifications</span>
-          </div>
+          </Link>
         </nav>
 
         {/* Footer */}
@@ -63,9 +66,17 @@ function App() {
         </div>
       </aside>
 
+
+
+
       {/* Main Content */}
       <main className="flex-1 bg-black flex flex-col">
-        <DashBoardPage />
+        <Routes>
+          <Route path="/" element={<DashBoardPage />} />
+          <Route path="/adherant" element={<AdherantPage />} />
+          <Route path="/demandes" element={<DemandeEmpruntPage />} />
+          <Route path="/notifications" element={<NotificationsPage />} />
+        </Routes>
       </main>
     </div>
   );
