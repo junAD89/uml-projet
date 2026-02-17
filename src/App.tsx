@@ -1,81 +1,78 @@
-import {
-  Bell,
-  Home,
-  MessageCircle,
-  Users2,
-} from "lucide-react";
 import "./App.css";
-import { Link, Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import DashBoardPage from "./pages/DashBoardPage";
 import AdherantPage from "./pages/AdherantPage";
 import DemandeEmpruntPage from "./pages/DemandeEmpruntPage";
 import NotificationsPage from "./pages/NotificationsPage";
+import LoginPage from "./pages/LoginPage";
+import SideBar from "./components/sideBar";
+
+interface User {
+  email: string;
+  isAuthenticated: boolean;
+  loginTime: string;
+}
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    // Vérifier si l'utilisateur est connecté au chargement de l'app
+    const user = localStorage.getItem("user");
+    if (user) {
+      try {
+        const userData: User = JSON.parse(user);
+        if (userData.isAuthenticated) {
+          setIsAuthenticated(true);
+        }
+      } catch (error) {
+        console.error("Erreur lors de la lecture du localStorage:", error);
+        localStorage.removeItem("user");
+      }
+    }
+    setLoading(false);
+  }, []);
+
+  // Fonction pour déconnecter l'utilisateur
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    setIsAuthenticated(false);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-black">
+        <div className="text-white text-lg">Chargement...</div>
+      </div>
+    );
+  }
+
+  // Si l'utilisateur n'est pas authentifié, afficher la page de connexion
+  if (!isAuthenticated) {
+    return (
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    );
+  }
+
+  // Si l'utilisateur est authentifié, afficher l'app principale
   return (
     <div className="flex min-h-screen bg-neutral-900">
       {/* Sidebar */}
-      <aside className="w-64 bg-neutral-800 text-white p-6 flex flex-col">
-        {/* Profile Section */}
-        <div className="mb-12">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center overflow-hidden">
-              <div className="w-14 h-14 bg-neutral-800 rounded-full flex items-center justify-center">
-                <span className="text-2xl font-bold text-blue-500">A</span>
-              </div>
-            </div>
-            <div>
-              <h3 className="font-bold text-lg">Afeli</h3>
-              <p className="text-sm text-neutral-400">afeli@gmail.com</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Navigation Items */}
-        <nav className="flex-1 space-y-4">
-          {/* Dashboard */}
-          <Link to="/" className="flex items-center gap-3 p-3 rounded-lg hover:bg-neutral-700 cursor-pointer transition">
-            <Home className="w-6 h-6 text-blue-500" />
-            <span className="font-medium text-blue-500">Dashboard</span>
-          </Link>
-
-          {/* Adherant */}
-          <Link to="/adherant" className="flex items-center gap-3 p-3 rounded-lg hover:bg-neutral-700 cursor-pointer transition">
-            <Users2 className="w-6 h-6" />
-            <span className="font-medium ">Adherant</span>
-          </Link>
-
-          {/* Demande D'emprunt */}
-          <Link to="/demandes" className="flex items-center gap-3 p-3 rounded-lg hover:bg-neutral-700 cursor-pointer transition">
-            <MessageCircle className="w-6 h-6 text-white" />
-            <span className="font-medium text-white">Demande D'emprunt</span>
-          </Link>
-
-          {/* Notifications */}
-          <Link to="/notifications" className="flex items-center gap-3 p-3 rounded-lg hover:bg-neutral-700 cursor-pointer transition">
-            <Bell className="w-6 h-6 text-white" />
-            <span className="font-medium text-white">Notifications</span>
-          </Link>
-        </nav>
-
-        {/* Footer */}
-        <div className="border-t border-neutral-700 pt-4">
-          <button className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-neutral-700 cursor-pointer transition text-left">
-            <span className="text-white font-medium">Sign Out</span>
-          </button>
-        </div>
-      </aside>
-
-
-
+      <SideBar onLogout={handleLogout} />
 
       {/* Main Content */}
       <main className="flex-1 bg-black flex flex-col">
         <Routes>
-          <Route path="/" element={<DashBoardPage />} />
+          <Route path="/dash" element={<DashBoardPage />} />
           <Route path="/adherant" element={<AdherantPage />} />
           <Route path="/demandes" element={<DemandeEmpruntPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
     </div>
