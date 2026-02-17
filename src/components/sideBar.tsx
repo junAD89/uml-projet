@@ -1,7 +1,17 @@
-import { Bell, Home, MessageCircle, Users2 } from "lucide-react";
+import { Bell, Home, MessageCircle, Users2, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
 
-export default function SideBar() {
+interface SideBarProps {
+  onLogout?: () => void;
+}
+
+export default function SideBar({ onLogout }: SideBarProps) {
+  const handleLogout = () => {
+    if (onLogout) {
+      onLogout();
+    }
+  };
+
   return (
     <aside className="w-64 bg-neutral-800 text-white p-6 flex flex-col">
       {/* Profile Section */}
@@ -60,8 +70,12 @@ export default function SideBar() {
 
       {/* Footer */}
       <div className="border-t border-neutral-700 pt-4">
-        <button className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-neutral-700 cursor-pointer transition text-left">
-          <span className="text-white font-medium">Sign Out</span>
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-red-600 cursor-pointer transition text-left duration-200"
+        >
+          <LogOut className="w-6 h-6 text-red-500" />
+          <span className="text-white font-medium">Déconnexion</span>
         </button>
       </div>
     </aside>

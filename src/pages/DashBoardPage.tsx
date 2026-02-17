@@ -2,7 +2,7 @@ import { ChevronRight, Search } from "lucide-react";
 
 export default function DashBoardPage() {
   return (
-    <div className="flex-1 p-6">
+    <div className="w-full h-full flex flex-col p-6">
       {/* Cards section */}
       <div className="flex gap-6">
         {/* Card: total emprunts */}
