@@ -1,3 +1,5 @@
+import { Toaster, toast } from "sonner";
+import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/LoginPage.css";
@@ -8,8 +10,9 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_BACKEND_URL;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
@@ -27,8 +30,15 @@ export default function LoginPage() {
       return;
     }
 
-    // Simuler une requête de connexion
-    setTimeout(() => {
+    try {
+      const response = await axios.post(`${API_URL}/login`, {
+        adminEmail: email,
+        adminPassword: password,
+      });
+
+      // Connexion réussie
+      toast.success("Connecté avec succès !");
+
       // Stocker les informations de connexion dans localStorage
       localStorage.setItem(
         "user",
@@ -39,16 +49,20 @@ export default function LoginPage() {
         }),
       );
 
-      // ici le reload est utiliser pour forcer le redemarage
-      window.location.reload();
+      window.location.reload(); // Rafraîchir la page pour mettre à jour l'état de connexion
       // Rediriger vers la page principale
-      navigate("/dash");
+      setTimeout(() => {
+        navigate("/dash");
+      }, 500);
+    } catch (error) {
+      toast.error("Email ou mot de passe incorrect");
       setLoading(false);
-    }, 500);
+    }
   };
 
   return (
     <div className="login-container">
+      <Toaster position="top-center" />
       <div className="login-card">
         <div className="login-header">
           <h1>Connexion</h1>
