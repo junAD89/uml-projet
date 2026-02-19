@@ -1,3 +1,4 @@
+import { OrbitProgress } from "react-loading-indicators";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import {
@@ -20,10 +21,12 @@ interface Book {
 
 export default function DashBoardPage() {
   const [livresEmpruntés, setLivresEmpruntés] = useState<Book[]>([]);
+
   const [loading, setLoading] = useState(true);
   const API_URL = import.meta.env.VITE_BACKEND_URL;
 
   const fetchLivres = async () => {
+    alert("fetching livres...");
     try {
       const response = await fetch(`${API_URL}/livres`);
       const data = await response.json();
@@ -42,8 +45,12 @@ export default function DashBoardPage() {
       );
 
       setLivresEmpruntés(livresTransformés);
+      alert("Livres fetched successfully!");
     } catch (error) {
       console.error("Erreur lors de la récupération des livres:", error);
+      alert(
+        "Erreur lors de la récupération des livres. Vérifiez la console pour plus de détails.",
+      );
     } finally {
       setLoading(false);
     }
@@ -104,69 +111,69 @@ export default function DashBoardPage() {
           Sort
         </button>
       </div>
-{loading ? (
-  
-      {/* Table section */}
-      <div className="bg-[#1A1A1A] rounded-lg overflow-hidden">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-neutral-700">
-              <th className="text-left p-4 text-neutral-300 font-medium">
-                Nom du livre
-              </th>
-              <th className="text-left p-4 text-neutral-300 font-medium">
-                Auteur(es)
-              </th>
-              <th className="text-left p-4 text-neutral-300 font-medium">
-                Categories
-              </th>
-              <th className="text-left p-4 text-neutral-300 font-medium">
-                Status
-              </th>
-              <th className="text-left p-4 text-neutral-300 font-medium">
-                nom l'emprunteur
-              </th>
-              <th className="text-left p-4 text-neutral-300 font-medium">
-                Penalite
-              </th>
-              <th className="text-left p-4 text-neutral-300 font-medium"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {livresEmpruntés.map((livre) => (
-              <tr
-                key={livre.id}
-                className="border-b border-neutral-700 hover:bg-[#2A2A2A] transition"
-              >
-                <td className="p-4 text-white">{livre.titre}</td>
-                <td className="p-4 text-white">{livre.auteur}</td>
-                <td className="p-4 text-white">{livre.categorie}</td>
-                <td className="p-4">
-                  <span className="bg-neutral-600 text-white px-4 py-1 rounded-full text-sm">
-                    {livre.status}
-                  </span>
-                </td>
-                <td className="p-4 text-white">{livre.emprunteur}</td>
-                <td className="p-4">
-                  <span className="bg-red-500 text-white px-4 py-1 rounded-full text-sm font-medium">
-                    {livre.penalite}
-                  </span>
-                </td>
-                <td className="p-4 text-center">
-                  <button className="text-neutral-400 hover:text-white transition">
-                    <MoreVertical size={18} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      )
-      :
-      (<div className="flex items-center justify-center h-64">
-          <p className="text-neutral-400">Chargement des livres...</p>
-        </div>)}
+
+      {loading ? (
+        <div>
+          {/* Table section */}
+          <div className="bg-[#1A1A1A] rounded-lg overflow-hidden">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-neutral-700">
+                  <th className="text-left p-4 text-neutral-300 font-medium">
+                    Nom du livre
+                  </th>
+                  <th className="text-left p-4 text-neutral-300 font-medium">
+                    Auteur(es)
+                  </th>
+                  <th className="text-left p-4 text-neutral-300 font-medium">
+                    Categories
+                  </th>
+                  <th className="text-left p-4 text-neutral-300 font-medium">
+                    Status
+                  </th>
+                  <th className="text-left p-4 text-neutral-300 font-medium">
+                    nom l'emprunteur
+                  </th>
+                  <th className="text-left p-4 text-neutral-300 font-medium">
+                    Penalite
+                  </th>
+                  <th className="text-left p-4 text-neutral-300 font-medium"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {livresEmpruntés.map((livre) => (
+                  <tr
+                    key={livre.id}
+                    className="border-b border-neutral-700 hover:bg-[#2A2A2A] transition"
+                  >
+                    <td className="p-4 text-white">{livre.titre}</td>
+                    <td className="p-4 text-white">{livre.auteur}</td>
+                    <td className="p-4 text-white">{livre.categorie}</td>
+                    <td className="p-4">
+                      <span className="bg-neutral-600 text-white px-4 py-1 rounded-full text-sm">
+                        {livre.status}
+                      </span>
+                    </td>
+                    <td className="p-4 text-white">{livre.emprunteur}</td>
+                    <td className="p-4">
+                      <span className="bg-red-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+                        {livre.penalite}
+                      </span>
+                    </td>
+                    <td className="p-4 text-center">
+                      <button className="text-neutral-400 hover:text-white transition">
+                        <MoreVertical size={18} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : (
+        <OrbitProgress color="#32cd32" size="medium" text="" textColor="" />
+      )}
     </div>
   );
 }
