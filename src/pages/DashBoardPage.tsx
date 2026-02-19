@@ -26,7 +26,7 @@ export default function DashBoardPage() {
   const API_URL = import.meta.env.VITE_BACKEND_URL;
 
   const fetchLivres = async () => {
-    alert("fetching livres...");
+    setLoading(true);
     try {
       const response = await fetch(`${API_URL}/livres`);
       const data = await response.json();
@@ -45,12 +45,8 @@ export default function DashBoardPage() {
       );
 
       setLivresEmpruntés(livresTransformés);
-      alert("Livres fetched successfully!");
     } catch (error) {
       console.error("Erreur lors de la récupération des livres:", error);
-      alert(
-        "Erreur lors de la récupération des livres. Vérifiez la console pour plus de détails.",
-      );
     } finally {
       setLoading(false);
     }
@@ -113,6 +109,8 @@ export default function DashBoardPage() {
       </div>
 
       {loading ? (
+        <OrbitProgress color="#32cd32" size="medium" text="" textColor="" />
+      ) : (
         <div>
           {/* Table section */}
           <div className="bg-[#1A1A1A] rounded-lg overflow-hidden">
@@ -171,8 +169,6 @@ export default function DashBoardPage() {
             </table>
           </div>
         </div>
-      ) : (
-        <OrbitProgress color="#32cd32" size="medium" text="" textColor="" />
       )}
     </div>
   );
