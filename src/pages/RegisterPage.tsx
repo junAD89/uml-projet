@@ -58,7 +58,8 @@ export default function RegisterPage() {
         navigate("/login");
       }, 1500);
     } catch (error: any) {
-      const errorMessage = error.response?.data?.error || "Erreur lors de l'inscription";
+      const errorMessage =
+        error.response?.data?.error || "Erreur lors de l'inscription";
       toast.error(errorMessage);
       setLoading(false);
     }
@@ -147,7 +148,10 @@ export default function RegisterPage() {
         <div className="login-footer">
           <p>
             Vous avez déjà un compte ?{" "}
-            <a href="/login" style={{ color: "#007bff", textDecoration: "none" }}>
+            <a
+              href="/login"
+              style={{ color: "#007bff", textDecoration: "none" }}
+            >
               Se connecter
             </a>
           </p>
