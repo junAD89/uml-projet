@@ -6,8 +6,10 @@ import {
   SlidersHorizontal,
   Trash2,
   Pencil,
+  X,
 } from "lucide-react";
 import { OrbitProgress } from "react-loading-indicators";
+import Modal from "react-modal";
 
 interface Livre {
   id: number;
@@ -15,7 +17,13 @@ interface Livre {
   auteur: string;
   categorie: string;
   isbn: string;
-  editeur: string;
+  status: string;
+}
+
+interface FormData {
+  titre: string;
+  auteur: string;
+  isbn: string;
   status: string;
 }
 
@@ -24,6 +32,13 @@ export default function GérerLivresPage() {
   const [loading, setLoading] = useState(true);
   const [openMenu, setOpenMenu] = useState<number | null>(null);
   const [filterStatus, setFilterStatus] = useState<string>("tous");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState<FormData>({
+    titre: "",
+    auteur: "",
+    isbn: "",
+    status: "Disponible",
+  });
 
   const API_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -40,7 +55,6 @@ export default function GérerLivresPage() {
           auteur: livre.auteur || "",
           categorie: "Non spécifiée",
           isbn: "ISBN-" + (livre.id || index),
-          editeur: "Éditeur inconnu",
           status: "Disponible",
         }),
       );
@@ -56,6 +70,8 @@ export default function GérerLivresPage() {
   useEffect(() => {
     fetchLivres();
   }, []);
+
+  const handleAddLivre = () => {};
 
   const filteredLivres = livres.filter((livre) => {
     if (filterStatus === "tous") return true;
@@ -84,7 +100,10 @@ export default function GérerLivresPage() {
         </div>
 
         {/* Buttons */}
-        <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition">
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition"
+        >
           <Plus size={20} />
           Ajouter un livre
         </button>
@@ -99,7 +118,6 @@ export default function GérerLivresPage() {
             <option value="tous">Tous les statuts</option>
             <option value="Disponible">Disponible</option>
             <option value="Emprunté">Emprunté</option>
-            <option value="En réparation">En réparation</option>
           </select>
           <SlidersHorizontal
             size={20}
@@ -126,9 +144,6 @@ export default function GérerLivresPage() {
                 ISBN
               </th>
               <th className="text-left p-4 text-neutral-300 font-medium">
-                Éditeur
-              </th>
-              <th className="text-left p-4 text-neutral-300 font-medium">
                 Status
               </th>
               <th className="text-center p-4 text-neutral-300 font-medium">
@@ -146,7 +161,6 @@ export default function GérerLivresPage() {
                 <td className="p-4 text-white">{livre.auteur}</td>
                 <td className="p-4 text-white">{livre.categorie}</td>
                 <td className="p-4 text-white">{livre.isbn}</td>
-                <td className="p-4 text-white">{livre.editeur}</td>
                 <td className="p-4">
                   <span
                     className={`px-4 py-1 rounded-full text-sm font-medium ${
@@ -198,6 +212,92 @@ export default function GérerLivresPage() {
           </p>
         </div>
       )}
+
+      {/* Modal pour ajouter un livre */}
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={() => setIsModalOpen(false)}
+        className="fixed inset-0 flex items-center justify-center p-4"
+        overlayClassName="fixed inset-0 bg-black/50"
+      >
+        <div className="bg-[#1A1A1A] rounded-lg border border-neutral-700 w-full max-w-md p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-white">Ajouter un livre</h2>
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="text-neutral-400 hover:text-white transition"
+            >
+              <X size={24} />
+            </button>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            {/* Titre */}
+            <div>
+              <label className="block text-sm font-medium text-neutral-300 mb-2">
+                Titre du livre *
+              </label>
+              <input
+                type="text"
+                value={formData.titre}
+                onChange={(e) =>
+                  setFormData({ ...formData, titre: e.target.value })
+                }
+                className="w-full bg-[#2A2A2A] border border-neutral-700 rounded-lg px-4 py-2 text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                placeholder="Ex: Les Misérables"
+              />
+            </div>
+
+            {/* Auteur */}
+            <div>
+              <label className="block text-sm font-medium text-neutral-300 mb-2">
+                Auteur *
+              </label>
+              <input
+                type="text"
+                value={formData.auteur}
+                onChange={(e) =>
+                  setFormData({ ...formData, auteur: e.target.value })
+                }
+                className="w-full bg-[#2A2A2A] border border-neutral-700 rounded-lg px-4 py-2 text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                placeholder="Ex: Victor Hugo"
+              />
+            </div>
+
+            {/* ISBN */}
+            <div>
+              <label className="block text-sm font-medium text-neutral-300 mb-2">
+                ISBN
+              </label>
+              <input
+                type="text"
+                value={formData.isbn}
+                onChange={(e) =>
+                  setFormData({ ...formData, isbn: e.target.value })
+                }
+                className="w-full bg-[#2A2A2A] border border-neutral-700 rounded-lg px-4 py-2 text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                placeholder="Ex: 978-2-07-036822-8"
+              />
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="flex gap-3 mt-6">
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="flex-1 bg-[#2A2A2A] hover:bg-[#3A3A3A] text-white px-4 py-2 rounded-lg font-medium transition"
+            >
+              Annuler
+            </button>
+            <button
+              onClick={handleAddLivre}
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition"
+            >
+              Ajouter
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
