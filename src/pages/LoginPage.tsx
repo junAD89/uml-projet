@@ -49,11 +49,10 @@ export default function LoginPage() {
         }),
       );
 
-      window.location.reload(); // Rafraîchir la page pour mettre à jour l'état de connexion
       // Rediriger vers la page principale
       setTimeout(() => {
-        navigate("/dash");
-      }, 500);
+        window.location.href = "/";
+      }, 1000);
     } catch (error) {
       toast.error("Email ou mot de passe incorrect");
       setLoading(false);
@@ -105,6 +104,15 @@ export default function LoginPage() {
 
         <div className="login-footer">
           <p>Compte de test : test@example.com / password123</p>
+          <p>
+            Pas encore de compte ?{" "}
+            <a
+              href="/register"
+              style={{ color: "#007bff", textDecoration: "none" }}
+            >
+              S'inscrire
+            </a>
+          </p>
         </div>
       </div>
     </div>

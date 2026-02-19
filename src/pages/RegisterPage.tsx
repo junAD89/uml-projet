@@ -53,9 +53,18 @@ export default function RegisterPage() {
 
       // Inscription réussie
       toast.success("Inscription réussie ! Redirection...");
-
+      // Stocker les informations de connexion dans localStorage
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          email: email,
+          isAuthenticated: true,
+          loginTime: new Date().toISOString(),
+        }),
+      );
       setTimeout(() => {
-        navigate("/login");
+        window.location.reload(); // Rafraîchir la page pour mettre à jour l'état de connexion
+        navigate("/dash");
       }, 1500);
     } catch (error: any) {
       const errorMessage =

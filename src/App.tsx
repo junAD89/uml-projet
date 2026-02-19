@@ -6,6 +6,7 @@ import AdherantPage from "./pages/AdherantPage";
 import DemandeEmpruntPage from "./pages/DemandeEmpruntPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 import SideBar from "./components/sideBar";
 
 interface User {
@@ -54,6 +55,7 @@ function App() {
     return (
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     );

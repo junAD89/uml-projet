@@ -1,10 +1,11 @@
 import { motion } from "motion/react";
+import { useEffect, useState } from "react";
 import {
   ChevronRight,
   Search,
   MoreVertical,
-  Plus,
   SlidersHorizontal,
+  RotateCcw,
 } from "lucide-react";
 
 interface Book {
@@ -17,19 +18,40 @@ interface Book {
   penalite: string;
 }
 
-const livresEmpruntés: Book[] = [
-  {
-    id: 1,
-    titre: "The millionaire....",
-    auteur: "Lorem Inpssum",
-    categorie: "self development",
-    status: "Emprunte",
-    emprunteur: "Joanita",
-    penalite: "OUI",
-  },
-];
-
 export default function DashBoardPage() {
+  const [livresEmpruntés, setLivresEmpruntés] = useState<Book[]>([]);
+  const [loading, setLoading] = useState(true);
+  const API_URL = import.meta.env.VITE_BACKEND_URL;
+
+  const fetchLivres = async () => {
+    try {
+      const response = await fetch(`${API_URL}/livres`);
+      const data = await response.json();
+
+      // Transformer les données du serveur avec des valeurs hardcodées pour les champs manquants
+      const livresTransformés: Book[] = data.livres.map(
+        (livre: any, index: number) => ({
+          id: livre.id || index + 1,
+          titre: livre.titre || "",
+          auteur: livre.auteur || "",
+          categorie: "self development",
+          status: "Emprunte",
+          emprunteur: "Joanita",
+          penalite: "OUI",
+        }),
+      );
+
+      setLivresEmpruntés(livresTransformés);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des livres:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchLivres();
+  }, []);
+
   return (
     <div className="w-full flex flex-col p-6 gap-6">
       {/* Cards section */}
@@ -65,13 +87,16 @@ export default function DashBoardPage() {
 
         {/* Buttons */}
         <motion.button
+          onClick={() => {
+            fetchLivres();
+          }}
           whileTap={{
             scale: 0.5,
           }}
           className="flex items-center gap-2 bg-[#424FCA] hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition"
         >
-          <Plus size={20} />
-          Create an order
+          <RotateCcw size={20} />
+          Rafraichir
         </motion.button>
 
         <button className="flex items-center gap-2 bg-[#2A2A2A] hover:bg-[#3A3A3A] text-white px-6 py-2 rounded-full font-medium transition">
@@ -79,7 +104,8 @@ export default function DashBoardPage() {
           Sort
         </button>
       </div>
-
+{loading ? (
+  
       {/* Table section */}
       <div className="bg-[#1A1A1A] rounded-lg overflow-hidden">
         <table className="w-full">
@@ -136,6 +162,11 @@ export default function DashBoardPage() {
           </tbody>
         </table>
       </div>
+      )
+      :
+      (<div className="flex items-center justify-center h-64">
+          <p className="text-neutral-400">Chargement des livres...</p>
+        </div>)}
     </div>
   );
 }
