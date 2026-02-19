@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 import {
   Search,
   MoreVertical,
@@ -45,8 +46,8 @@ export default function GérerLivresPage() {
   const fetchLivres = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/livres`);
-      const data = await response.json();
+      const response = await axios.get(`${API_URL}/livres`);
+      const data = response.data;
 
       const livresTransformés: Livre[] = data.livres.map(
         (livre: any, index: number) => ({
@@ -71,7 +72,43 @@ export default function GérerLivresPage() {
     fetchLivres();
   }, []);
 
-  const handleAddLivre = () => {};
+  const handleAddLivre = async () => {
+    if (!formData.titre.trim() || !formData.auteur.trim()) {
+      alert("Veuillez remplir au moins le titre et l'auteur");
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${API_URL}/ajouter_livre`, {
+        titre: formData.titre,
+        auteur: formData.auteur,
+        isbn: formData.isbn || null,
+        status: formData.status,
+      });
+
+      const newLivre: Livre = {
+        id: response.data.id || livres.length + 1,
+        titre: formData.titre,
+        auteur: formData.auteur,
+        isbn: formData.isbn || "Non spécifié",
+        categorie: "Non spécifiée",
+        status: formData.status,
+      };
+
+      setLivres([...livres, newLivre]);
+      setFormData({
+        titre: "",
+        auteur: "",
+        isbn: "",
+        status: "Disponible",
+      });
+      setIsModalOpen(false);
+      alert("Livre ajouté avec succès!");
+    } catch (error) {
+      console.error("Erreur:", error);
+      alert("Erreur lors de l'ajout du livre");
+    }
+  };
 
   const filteredLivres = livres.filter((livre) => {
     if (filterStatus === "tous") return true;
@@ -102,7 +139,7 @@ export default function GérerLivresPage() {
         {/* Buttons */}
         <button
           onClick={() => setIsModalOpen(true)}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition"
+          className="cursor-pointer flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition"
         >
           <Plus size={20} />
           Ajouter un livre
@@ -278,6 +315,24 @@ export default function GérerLivresPage() {
                 className="w-full bg-[#2A2A2A] border border-neutral-700 rounded-lg px-4 py-2 text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-600"
                 placeholder="Ex: 978-2-07-036822-8"
               />
+            </div>
+
+            {/* Status */}
+            <div>
+              <label className="block text-sm font-medium text-neutral-300 mb-2">
+                Statut *
+              </label>
+              <select
+                value={formData.status}
+                onChange={(e) =>
+                  setFormData({ ...formData, status: e.target.value })
+                }
+                className="w-full bg-[#2A2A2A] border border-neutral-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+              >
+                <option value="Disponible">Disponible</option>
+                <option value="Emprunté">Emprunté</option>
+                <option value="En réparation">En réparation</option>
+              </select>
             </div>
           </div>
 
