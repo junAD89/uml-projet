@@ -8,6 +8,7 @@ import NotificationsPage from "./pages/NotificationsPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import SideBar from "./components/sideBar";
+import GérerLivresPage from "./pages/GererLivresPage";
 
 interface User {
   email: string;
@@ -72,6 +73,7 @@ function App() {
         <Routes>
           <Route path="/" element={<DashBoardPage />} />
           <Route path="/adherant" element={<AdherantPage />} />
+          <Route path="/livres" element={<GérerLivresPage />} />
           <Route path="/demandes" element={<DemandeEmpruntPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />

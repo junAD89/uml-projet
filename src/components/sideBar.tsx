@@ -1,4 +1,4 @@
-import { Bell, Home, MessageCircle, Users2, LogOut } from "lucide-react";
+import { Bell, Home, MessageCircle, Users2, LogOut, Book } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface SideBarProps {
@@ -47,6 +47,15 @@ export default function SideBar({ onLogout }: SideBarProps) {
         >
           <Users2 className="w-6 h-6" />
           <span className="font-medium ">Adherant</span>
+        </Link>
+
+        {/* Gérer les livres */}
+        <Link
+          to="/livres"
+          className="flex items-center gap-3 p-3 rounded-lg hover:bg-neutral-700 cursor-pointer transition"
+        >
+          <Book className="w-6 h-6" />
+          <span className="font-medium">Gérer les livres</span>
         </Link>
 
         {/* Demande D'emprunt */}
